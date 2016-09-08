@@ -8,16 +8,16 @@
   },
   "description": "Batching strategy that support promise as callback",
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-eslint": "^6.0.5",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-react": "^6.5.0",
+    "babel-cli": "^6.14.0",
+    "babel-eslint": "^6.1.2",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
     "babel-preset-stage-0": "^6.5.0",
-    "esformatter": "^0.9.5",
-    "esformatter-jsx": "^7.0.0",
+    "esformatter": "^0.9.6",
+    "esformatter-jsx": "^7.0.1",
     "esformatter-quotes": "^1.1.0",
-    "eslint": "^2.13.1",
-    "eslint-plugin-react": "^5.2.2"
+    "eslint": "^3.4.0",
+    "eslint-plugin-react": "^6.2.0"
   },
   "esformatter": {
     "jsx": {
@@ -87,7 +87,7 @@
       "url": "https://github.com/webcarrot/react-promise-batching/blob/master/LICENSE"
     }
   ],
-  "main": "./index.js",
+  "main": "./BatchingStrategy.js",
   "maintainers": [
     {
       "email": "admin@webcarrot.pl",
