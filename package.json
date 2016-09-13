@@ -6,7 +6,7 @@
   "bugs": {
     "url": "https://github.com/webcarrot/react-promise-batching/issues"
   },
-  "description": "Batching strategy that support promise as callback",
+  "description": "Batching strategy that support promise and generators as callback",
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-eslint": "^6.1.2",
@@ -79,7 +79,8 @@
     "react",
     "strategy",
     "promise",
-    "async"
+    "async",
+    "generator"
   ],
   "licenses": [
     {
@@ -87,7 +88,7 @@
       "url": "https://github.com/webcarrot/react-promise-batching/blob/master/LICENSE"
     }
   ],
-  "main": "./BatchingStrategy.js",
+  "main": "./index.js",
   "maintainers": [
     {
       "email": "admin@webcarrot.pl",
@@ -109,5 +110,5 @@
     "preinstall": "node ./scripts/preinstall.js",
     "prepublish": "npm run build"
   },
-  "version": "0.0.2"
+  "version": "1.0.0"
 }

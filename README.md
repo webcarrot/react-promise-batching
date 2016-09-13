@@ -1,5 +1,5 @@
 # react-promise-batching
-Batching strategy that support promise as callback
+Batching strategy that support promise and generators as callback
 
 ## Usage
 
@@ -9,9 +9,9 @@ npm install react-promise-batching
 
 Do once:
 ```javascript
-import BatchingStrategy from "react-promise-batching";
+import batchingStrategyInstance from "react-promise-batching";
 import ReactUpdates from "react/lib/ReactUpdates";
-ReactUpdates.injection.injectBatchingStrategy(new BatchingStrategy());
+ReactUpdates.injection.injectBatchingStrategy(batchingStrategyInstance);
 ```
 
 Somewhere:
@@ -19,14 +19,24 @@ Somewhere:
 import ReactUpdates from "react/lib/ReactUpdates";
 const batchedUpdates = ReactUpdates.batchedUpdates;
 // ...
-// do ansync stuff
-const fooPromise = service.getFooData();
-batchedUpdates(fooPromise);
-const barPromise = service.getBarData();
-batchedUpdates(barPromise);
-const emptyFunction = () => null;
-batchedUpdates(emptyFunction);
-// render after both fooPromise and barPromise resolve/reject and emptyFunction do its job
+function someAction() {
+  // do async stuff
+  const fooPromise = fluxLib.callActionAndReturnPromise(fooAction);
+  batchedUpdates(fooPromise);
+  const barPromise = fluxLib.callActionAndReturnPromise(barAction);
+  batchedUpdates(barPromise);
+  // no real sense now ...
+  // simple function
+  const emptyFunction = () => null;
+  batchedUpdates(emptyFunction);
+  // generator function
+  const generatorFunction = function*(a, b) {yield a+b;};
+  batchedUpdates(generatorFunction, 1, 2);
+  // generator object
+  const generatorObject = generatorFunction(1, 2);
+  batchedUpdates(generatorObject);
+  // render after: fooPromise, barPromise resolve/reject and emptyFunction, generatorFunction and generatorObject do its job
+}
 // ...
 ```
 

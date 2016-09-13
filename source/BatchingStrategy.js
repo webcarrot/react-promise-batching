@@ -6,99 +6,99 @@ const SOURCE_NONE = -1;
 const SOURCE_FUNCTION = 0;
 const SOURCE_PROMISE = 1;
 
+const GENERATOR_FUNCTION = "GeneratorFunction";
+const GENERATOR_OBJECT = "[object Generator]";
+
 export default class BatchingStrategy {
 
   constructor() {
-    this.source = SOURCE_NONE;
-    this.promise = null;
+    this._source = SOURCE_NONE;
+    this._promise = null;
   }
 
   get isBatchingUpdates() {
     return this._source !== SOURCE_NONE;
   }
 
-  get source() {
-    return this._source;
-  }
-
-  set source(source) {
-    this._source = source;
-  }
-
-  get promise() {
-    return this._promise;
-  }
-
-  set promise(promise) {
-    this._promise = promise;
-  }
-
   batchedUpdates(callback, a, b, c, d, e) {
-    if (a) {
-      // standard call - events, components etc
-      const isBatchingUpdates = this.isBatchingUpdates;
-      if (!isBatchingUpdates) {
-        this.source = SOURCE_FUNCTION;
+    if (callback instanceof Function) {
+      if (GENERATOR_FUNCTION === callback.constructor.name) {
+        this._handleGeneratorFunction(callback, a, b, c, d, e);
+      } else {
+        this._handleFunction(callback, a, b, c, d, e);
       }
-      this.run(callback, a, b, c, d, e);
-      if (!isBatchingUpdates && this.source === SOURCE_FUNCTION) {
-        this.close();
-      }
-      return;
-    }
-    if (this.isBatchingUpdates) {
-      if (callback instanceof Function) {
-        if (this.source === SOURCE_FUNCTION) {
-          this.run(callback, a, b, c, d, e);
-        } else if (this.source === SOURCE_PROMISE) {
-          const promise = this.promise.then(() => this.run(callback, a, b, c, d, e)).then(() => this.closePromise(promise));
-          this.promise = promise;
-        }
-      } else if (callback instanceof Promise) {
-        if (this.source === SOURCE_FUNCTION) {
-          this.source = SOURCE_PROMISE;
-          this.promise = Promise.resolve();
-        }
-        const promise = this.promise.then(() => callback).catch(() => null).then(() => this.closePromise(promise));
-        this.promise = promise;
-      }
-    } else {
-      if (callback instanceof Function) {
-        this.source = SOURCE_FUNCTION;
-        this.run(callback, a, b, c, d, e);
-        if (this.source === SOURCE_FUNCTION) {
-          this.close();
-        }
-      } else if (callback instanceof Promise) {
-        this.source = SOURCE_PROMISE;
-        const promise = callback.catch(() => null).then(() => this.closePromise(promise));
-        this.promise = promise;
+    } else if (callback !== null && callback instanceof Object) {
+      if (callback instanceof Promise) {
+        this._handlePromise(callback);
+      } else if (GENERATOR_OBJECT === callback.toString()) {
+        this._handleGeneratorObject(callback);
       }
     }
   }
 
-  run(callback, a, b, c, d, e) {
+  _handlePromise(promiseToHandle) {
+    if (this._source === SOURCE_PROMISE) {
+      const promise = this._promise = this._promise.then(() => promiseToHandle).catch(() => null).then(() => this._closePromise(promise));
+    } else {
+      this._source = SOURCE_PROMISE;
+      const promise = this._promise = promiseToHandle.catch(() => null).then(() => this._closePromise(promise));
+    }
+  }
+
+  _handleGeneratorFunction(callback, a, b, c, d, e) {
+    try {
+      this._handleGeneratorObject(callback(a, b, c, d, e))
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  _handleGeneratorObject(generator) {
+    const generatorPromise = new Promise((resolve, reject) => {
+      let done = false;
+      while (!done) {
+        try {
+          done = generator.next().done;
+        } catch (err) {
+          reject(err);
+        }
+      }
+      resolve();
+    });
+    this._handlePromise(generatorPromise);
+  }
+
+  _handleFunction(callback, a, b, c, d, e) {
+    const isBatchingUpdates = this.isBatchingUpdates;
+    if (!isBatchingUpdates) {
+      this._source = SOURCE_FUNCTION;
+    }
     try {
       callback(a, b, c, d, e);
     } catch (_) {
       // ignore
     }
+    if (!isBatchingUpdates && this._source === SOURCE_FUNCTION) {
+      this._close();
+    }
+    return;
+
   }
 
-  closePromise(promise) {
-    if (promise === this.promise) {
-      this.promise = null;
-      this.close();
+  _closePromise(promise) {
+    if (promise === this._promise) {
+      this._promise = null;
+      this._close();
     }
   }
 
-  close() {
+  _close() {
     try {
       ReactUpdates.flushBatchedUpdates();
     } catch (_) {
       // ignore
     }
-    this.source = SOURCE_NONE;
+    this._source = SOURCE_NONE;
   }
 
 }
