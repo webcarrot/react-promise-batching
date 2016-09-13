@@ -110,5 +110,5 @@
     "preinstall": "node ./scripts/preinstall.js",
     "prepublish": "npm run build"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

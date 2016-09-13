@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.1
+
+### General
+ * fix infinite loop on generator error
+
 ## 1.0.0
 
 ### General

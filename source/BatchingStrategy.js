@@ -54,14 +54,9 @@ export default class BatchingStrategy {
   }
 
   _handleGeneratorObject(generator) {
-    const generatorPromise = new Promise((resolve, reject) => {
-      let done = false;
-      while (!done) {
-        try {
-          done = generator.next().done;
-        } catch (err) {
-          reject(err);
-        }
+    const generatorPromise = new Promise(resolve => {
+      while (!generator.next().done) {
+        // waiting or crashing
       }
       resolve();
     });
@@ -81,8 +76,6 @@ export default class BatchingStrategy {
     if (!isBatchingUpdates && this._source === SOURCE_FUNCTION) {
       this._close();
     }
-    return;
-
   }
 
   _closePromise(promise) {
