@@ -1,6 +1,6 @@
 "use strict";
 
-import ReactUpdates from "react/lib/ReactUpdates";
+import ReactUpdates from "react-dom/lib/ReactUpdates";
 
 const SOURCE_NONE = -1;
 const SOURCE_FUNCTION = 0;
@@ -38,18 +38,18 @@ export default class BatchingStrategy {
 
   _handlePromise(promiseToHandle) {
     if (this._source === SOURCE_PROMISE) {
-      const promise = this._promise = this._promise.then(() => promiseToHandle).catch(() => null).then(() => this._closePromise(promise));
+      const promise = this._promise = this._promise.then(() => promiseToHandle).catch(err => this._throw(err)).then(() => this._closePromise(promise));
     } else {
       this._source = SOURCE_PROMISE;
-      const promise = this._promise = promiseToHandle.catch(() => null).then(() => this._closePromise(promise));
+      const promise = this._promise = promiseToHandle.catch(err => this._throw(err)).then(() => this._closePromise(promise));
     }
   }
 
   _handleGeneratorFunction(callback, a, b, c, d, e) {
     try {
       this._handleGeneratorObject(callback(a, b, c, d, e))
-    } catch (_) {
-      // ignore
+    } catch (err) {
+      this._throw(err);
     }
   }
 
@@ -70,8 +70,8 @@ export default class BatchingStrategy {
     }
     try {
       callback(a, b, c, d, e);
-    } catch (_) {
-      // ignore
+    } catch (err) {
+      this._throw(err);
     }
     if (!isBatchingUpdates && this._source === SOURCE_FUNCTION) {
       this._close();
@@ -88,10 +88,15 @@ export default class BatchingStrategy {
   _close() {
     try {
       ReactUpdates.flushBatchedUpdates();
-    } catch (_) {
-      // ignore
+    } catch (err) {
+      this._throw(err);
     }
     this._source = SOURCE_NONE;
+  }
+
+  _throw(err) {
+    console.error(err.message, err.stack);
+    throw err;
   }
 
 }
