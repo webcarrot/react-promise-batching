@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.2
+
+### General
+ * support react 15.4.0
+ * log exceptions
+
 ## 1.0.1
 
 ### General

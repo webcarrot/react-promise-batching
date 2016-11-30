@@ -10,7 +10,7 @@ npm install react-promise-batching
 Do once:
 ```javascript
 import batchingStrategyInstance from "react-promise-batching";
-import ReactUpdates from "react/lib/ReactUpdates";
+import ReactUpdates from "react-dom/lib/ReactUpdates";
 ReactUpdates.injection.injectBatchingStrategy(batchingStrategyInstance);
 ```
 
