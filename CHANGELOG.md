@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.4
+
+### General
+ * fix status clear before throw error
+
 ## 1.0.3
 
 ### General

@@ -89,6 +89,7 @@ export default class BatchingStrategy {
     try {
       ReactUpdates.flushBatchedUpdates();
     } catch (err) {
+      this._source = SOURCE_NONE;
       this._throw(err);
     }
     this._source = SOURCE_NONE;
