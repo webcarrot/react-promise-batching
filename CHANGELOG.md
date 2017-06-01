@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.5
+
+### General
+ * use webcarrot-package to publish
+
 ## 1.0.4
 
 ### General
