@@ -77,12 +77,5 @@
     "type": "git",
     "url": "git+https://github.com/webcarrot/react-promise-batching.git"
   },
-  "scripts": {
-    "build": "babel source --out-dir distribution",
-    "format": "esformatter -i source/**/*.js",
-    "lint": "eslint ./source",
-    "preinstall": "node ./scripts/preinstall.js",
-    "prepublish": "npm run build"
-  },
   "version": "1.0.5"
 }
