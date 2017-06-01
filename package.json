@@ -77,5 +77,8 @@
     "type": "git",
     "url": "git+https://github.com/webcarrot/react-promise-batching.git"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "version": "1.0.5"
 }
